@@ -1,0 +1,32 @@
+---
+/**
+ * The FAQ as visible text AND FAQPage JSON-LD (the schema lives in the page's
+ * @graph via JsonLd `extra`, so this component only renders the visible list).
+ * Answers are plain text because the identical string is used in the schema.
+ */
+import type { FaqItem } from '../data/faq';
+
+interface Props {
+  items: FaqItem[];
+  class?: string;
+}
+const { items, class: className = '' } = Astro.props;
+---
+
+<dl class={`faq-list ${className}`.trim()}>
+  {
+    items.map((item) => (
+      <div class="faq-item">
+        <dt>{item.q}</dt>
+        <dd>{item.a}</dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .faq-list { display: grid; gap: 1.5rem; }
+  .faq-item { border-top: 1px solid color-mix(in srgb, currentColor 20%, transparent); padding-top: 1rem; }
+  .faq-item dt { font-weight: 600; line-height: 1.3; }
+  .faq-item dd { margin-top: 0.5rem; max-width: 65ch; opacity: 0.85; }
+</style>

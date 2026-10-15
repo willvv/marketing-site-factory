@@ -1,0 +1,21 @@
+---
+/** Shown only on multilingual sites. Jumps to the same page in the other language, never to a 404. */
+import { locales, alternatePath, langFromPath, t, isMultilingual } from '../i18n';
+
+const lang = langFromPath(Astro.url.pathname);
+// Explicit `: boolean` return type: without it TS 5.5 infers a type predicate, and with a single
+// locale narrows `l` to `never` (the single-language build then fails to type-check).
+const others = locales.filter((l): boolean => l !== lang);
+---
+
+{
+  isMultilingual && (
+    <nav aria-label={t(lang).ui.language} class="lang-switch">
+      {others.map((l) => (
+        <a href={alternatePath(Astro.url.pathname, l)} hreflang={t(l).htmlLang} lang={t(l).htmlLang}>
+          {l.toUpperCase()}
+        </a>
+      ))}
+    </nav>
+  )
+}

@@ -1,0 +1,77 @@
+@import 'tailwindcss';
+
+/*
+ * Brand tokens. BRAND.md is the source of truth: replace these with the site's
+ * real palette and type BEFORE building any layout. Every site must look
+ * different - do not keep these defaults.
+ *
+ * Contrast: verify every text/background pair to WCAG AA (4.5:1 body, 3:1 large)
+ * and record the verified pairs in BRAND.md.
+ */
+@theme {
+  --color-ink: #1a1a1a;
+  --color-paper: #ffffff;
+  --color-accent: #0b5fff;
+  --color-accent-ink: #ffffff;
+  --font-display: ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+  --font-body: ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    -webkit-text-size-adjust: 100%;
+  }
+  h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; letter-spacing: -0.01em; }
+  h1 { font-size: clamp(2rem, 6vw, 3.25rem); }
+  h2 { font-size: clamp(1.4rem, 3.5vw, 2rem); margin-bottom: 0.75rem; }
+  a { color: inherit; text-underline-offset: 0.2em; }
+  :focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+}
+
+@layer components {
+  .container { width: min(100% - 2rem, 70rem); margin-inline: auto; }
+  .hero { padding-block: clamp(2.5rem, 8vw, 6rem); display: grid; gap: 1rem; }
+  .lead { font-size: 1.15rem; max-width: 60ch; }
+  .block { padding-block: clamp(1.5rem, 5vw, 3rem); }
+  .cta {
+    display: inline-block; width: fit-content; padding: 0.85rem 1.4rem; border-radius: 0.5rem;
+    background: var(--color-accent); color: var(--color-accent-ink); font-weight: 600; text-decoration: none;
+  }
+  .cta:active { transform: scale(0.98); }
+  .skip-link { position: absolute; left: -999px; top: 0; padding: 0.5rem 1rem; background: var(--color-ink); color: var(--color-paper); }
+  .skip-link:focus { left: 0.5rem; top: 0.5rem; z-index: 50; }
+
+  .site-header { border-bottom: 1px solid color-mix(in srgb, currentColor 15%, transparent); }
+  .header-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 0.75rem; }
+  .brand { font-weight: 700; text-decoration: none; }
+  .nav-desktop { display: none; }
+  .nav-desktop ul { display: flex; gap: 0.25rem; }
+  .nav-desktop a, .nav-mobile a { display: block; padding: 0.5rem 0.75rem; text-decoration: none; }
+  .nav-mobile summary { cursor: pointer; list-style: none; padding: 0.5rem 0.75rem; }
+  .nav-mobile[open] nav { position: absolute; left: 0; right: 0; top: 100%; background: var(--color-paper); padding: 0.5rem 1rem 1rem; border-bottom: 1px solid color-mix(in srgb, currentColor 15%, transparent); }
+  .site-header { position: relative; }
+  .lang-switch a { padding: 0.5rem 0.75rem; font-weight: 600; text-decoration: none; }
+
+  @media (min-width: 768px) {
+    .nav-desktop { display: block; }
+    .nav-mobile { display: none; }
+  }
+
+  .site-footer { margin-top: 3rem; padding-block: 2rem; border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent); }
+  .footer-grid { display: grid; gap: 1.5rem; }
+  @media (min-width: 768px) { .footer-grid { grid-template-columns: 2fr 1fr 2fr; } }
+  .footer-name { font-weight: 700; }
+  .footer-legal { margin-top: 1.5rem; font-size: 0.875rem; opacity: 0.75; }
+  address { font-style: normal; }
+  .channels { display: grid; grid-template-columns: max-content 1fr; gap: 0.5rem 1.5rem; }
+  .channels dt { font-weight: 600; }
+}

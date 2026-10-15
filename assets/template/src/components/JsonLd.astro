@@ -1,0 +1,73 @@
+---
+/**
+ * Structured data, emitted as one @graph. Only facts that are true of this
+ * business appear: an empty address, phone or area is OMITTED, never invented.
+ */
+import { site, contact, business } from '../config';
+import { locales, defaultLocale, pathFor, t, type PageKey } from '../i18n';
+import type { Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  /** Page key, or null for pages outside the route map (404). */
+  pageKey: PageKey | null;
+  /** Extra nodes, e.g. a FAQPage. */
+  extra?: Record<string, unknown>[];
+}
+
+const { lang, pageKey, extra = [] } = Astro.props;
+const copy = t(lang);
+const origin = site.url.replace(/\/$/, '');
+const abs = (path: string) => `${origin}${path}`;
+
+const entity: Record<string, unknown> = {
+  '@type': business.schemaType,
+  '@id': abs('/#business'),
+  name: site.legalName,
+  url: abs(pathFor('home', defaultLocale)),
+  description: site.description,
+  inLanguage: locales.map((l) => t(l).htmlLang),
+  knowsLanguage: business.knowsLanguage,
+  ...(contact.email ? { email: contact.email } : {}),
+  ...(contact.phone || contact.whatsapp ? { telephone: contact.phone ? contact.phone : `+${contact.whatsapp}` } : {}),
+  ...(contact.address
+    ? {
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: contact.address.street,
+          addressLocality: contact.address.locality,
+          addressRegion: contact.address.region,
+          ...(contact.address.postalCode ? { postalCode: contact.address.postalCode } : {}),
+          addressCountry: contact.address.country,
+        },
+      }
+    : {}),
+  ...(contact.hours.length ? { openingHours: contact.hours } : {}),
+  ...(business.areaServed.length ? { areaServed: business.areaServed } : {}),
+  ...(business.sameAs.length ? { sameAs: business.sameAs } : {}),
+};
+
+const website = {
+  '@type': 'WebSite',
+  '@id': abs('/#website'),
+  url: abs('/'),
+  name: site.name,
+  inLanguage: copy.htmlLang,
+  publisher: { '@id': abs('/#business') },
+};
+
+const crumbs =
+  pageKey && pageKey !== 'home'
+    ? {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: copy.ui.home, item: abs(pathFor('home', lang)) },
+          { '@type': 'ListItem', position: 2, name: copy.nav[pageKey as Exclude<PageKey, 'home'>], item: abs(pathFor(pageKey, lang)) },
+        ],
+      }
+    : null;
+
+const graph = { '@context': 'https://schema.org', '@graph': [entity, website, ...(crumbs ? [crumbs] : []), ...extra] };
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(graph)} is:inline />

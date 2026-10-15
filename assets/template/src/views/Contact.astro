@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Cta from '../components/Cta.astro';
+import { contact, whatsappHref } from '../config';
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+const wa = whatsappHref(lang);
+---
+
+<BaseLayout title={c.contact.title} description={c.contact.description}>
+  <section class="container hero">
+    <h1>{c.contact.h1}</h1>
+    <p class="lead">{c.contact.lead}</p>
+    <Cta lang={lang} />
+  </section>
+  <section class="container block" aria-labelledby="channels">
+    <h2 id="channels">{c.ui.contactHeading}</h2>
+    <dl class="channels">
+      <dt>{c.ui.emailLabel}</dt>
+      <dd>{contact.email ? <a href={`mailto:${contact.email}`}>{contact.email}</a> : c.ui.notPublished}</dd>
+      <dt>{c.ui.whatsappLabel}</dt>
+      <dd>{wa ? <a href={wa} target="_blank" rel="noopener">+{contact.whatsapp}</a> : c.ui.notPublished}</dd>
+      <dt>{c.ui.phoneLabel}</dt>
+      <dd>{contact.phone ?? c.ui.notPublished}</dd>
+      <dt>{c.ui.addressLabel}</dt>
+      <dd>{contact.address ? `${contact.address.street}, ${contact.address.locality}, ${contact.address.region}` : c.ui.notPublished}</dd>
+      <dt>{c.ui.hoursLabel}</dt>
+      <dd>{contact.hours.length ? contact.hours.join('; ') : c.ui.notPublished}</dd>
+    </dl>
+  </section>
+</BaseLayout>

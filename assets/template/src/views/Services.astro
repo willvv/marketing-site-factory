@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Cta from '../components/Cta.astro';
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+---
+
+<BaseLayout title={c.services.title} description={c.services.description}>
+  <section class="container hero">
+    <h1>{c.services.h1}</h1>
+    <p class="lead">{c.services.lead}</p>
+  </section>
+  <section class="container block">
+    {c.services.items.map((i) => <article><h2>{i.name}</h2><p>{i.body}</p></article>)}
+    <Cta lang={lang} />
+  </section>
+</BaseLayout>

@@ -1,0 +1,35 @@
+---
+/**
+ * Two analytics layers, both driven by `analytics` in src/config.ts.
+ *
+ * 1. Cloudflare Web Analytics - cookie-less, needs no consent banner. This is the
+ *    honest number (no ad-blocker gap).
+ * 2. Google Analytics 4 - renders nothing until a real G-XXXXXXXXXX exists.
+ *
+ * Both are skipped outside a production build so local previews and screenshots
+ * never pollute the numbers.
+ */
+import { analytics } from '../config';
+
+const isProd = import.meta.env.PROD;
+const cfToken = isProd ? analytics.cloudflareToken : null;
+const ga = isProd ? analytics.ga4Id : null;
+---
+
+{
+  cfToken && (
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: cfToken })} is:inline />
+  )
+}
+
+{
+  ga && (
+    <>
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${ga}`} is:inline />
+      <script
+        is:inline
+        set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${ga}');`}
+      />
+    </>
+  )
+}

@@ -1,0 +1,31 @@
+---
+/**
+ * One route file renders every page in every locale. Adding a locale or a page
+ * means editing the dictionaries and src/i18n/index.ts, not duplicating files.
+ */
+import { locales, pageKeys, pathFor, type Lang, type PageKey } from '../i18n';
+import Home from '../views/Home.astro';
+import Services from '../views/Services.astro';
+import About from '../views/About.astro';
+import Contact from '../views/Contact.astro';
+import FaqPage from '../views/FaqPage.astro';
+
+export function getStaticPaths() {
+  return locales.flatMap((lang) =>
+    pageKeys.map((key) => {
+      const path = pathFor(key, lang).replace(/^\/|\/$/g, '');
+      return { params: { path: path === '' ? undefined : path }, props: { lang, key } };
+    })
+  );
+}
+
+interface Props {
+  lang: Lang;
+  key: PageKey;
+}
+const { lang, key } = Astro.props;
+const views = { home: Home, services: Services, about: About, contact: Contact, faq: FaqPage } as const;
+const View = views[key];
+---
+
+<View lang={lang} />

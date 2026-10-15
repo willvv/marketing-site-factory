@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+---
+
+<BaseLayout title={c.about.title} description={c.about.description}>
+  <section class="container hero">
+    <h1>{c.about.h1}</h1>
+    {c.about.body.map((p) => <p>{p}</p>)}
+  </section>
+</BaseLayout>

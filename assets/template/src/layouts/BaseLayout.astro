@@ -1,0 +1,53 @@
+---
+import SEO from '../components/SEO.astro';
+import JsonLd from '../components/JsonLd.astro';
+import Analytics from '../components/Analytics.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { langFromPath, pageKeyFromPath, t } from '../i18n';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  /** Extra JSON-LD nodes for this page (FAQPage, Service, ...). */
+  jsonLd?: Record<string, unknown>[];
+}
+
+const { title, description, ogImage, ogType, noindex, jsonLd } = Astro.props;
+// Language comes from the URL, so no intermediate component has to forward it.
+const lang = langFromPath(Astro.url.pathname);
+const copy = t(lang);
+const pageKey = pageKeyFromPath(Astro.url.pathname);
+---
+
+<!doctype html>
+<html lang={copy.htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <SEO title={title} description={description} ogImage={ogImage} ogType={ogType} noindex={noindex} />
+    <JsonLd lang={lang} pageKey={pageKey} extra={jsonLd} />
+    <Analytics />
+    <!-- Brand fonts: preconnect + one stylesheet with display=swap, or self-hosted woff2 with a preload. -->
+    <slot name="head" />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">{copy.ui.skipToContent}</a>
+    <Header lang={lang} />
+    <main id="main"><slot /></main>
+    <Footer lang={lang} />
+  </body>
+</html>
+
+<!--
+  No global `img { height: auto }` here. Tailwind's preflight already ships
+  `img, video { max-width: 100%; height: auto }` inside @layer base; an unlayered
+  <style is:global> rule outranks every @layer and silently kills height utilities.
+-->

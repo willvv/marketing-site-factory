@@ -1,0 +1,43 @@
+---
+import { site } from '../config';
+import { navKeys, pathFor, t, type Lang } from '../i18n';
+import LanguageSwitch from './LanguageSwitch.astro';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const copy = t(lang);
+const current = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="container header-row">
+    <a class="brand" href={pathFor('home', lang)} aria-label={`${site.name} - ${copy.ui.home}`}>{site.name}</a>
+
+    <!-- Desktop: always-visible links. Mobile: a <details> disclosure, which needs no JavaScript. -->
+    <nav aria-label={copy.ui.menu} class="nav-desktop">
+      <ul>
+        {
+          navKeys.map((k) => (
+            <li>
+              <a href={pathFor(k, lang)} aria-current={current === pathFor(k, lang) ? 'page' : undefined}>
+                {copy.nav[k]}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <details class="nav-mobile">
+      <summary>{copy.ui.menu}</summary>
+      <nav aria-label={copy.ui.menu}>
+        <ul>
+          {navKeys.map((k) => <li><a href={pathFor(k, lang)}>{copy.nav[k]}</a></li>)}
+        </ul>
+      </nav>
+    </details>
+
+    <LanguageSwitch />
+  </div>
+</header>

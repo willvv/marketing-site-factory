@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Cta from '../components/Cta.astro';
+import Faq from '../components/Faq.astro';
+import { faq } from '../data/faq';
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const c = t(lang);
+const items = faq[lang];
+const faqLd = {
+  '@type': 'FAQPage',
+  mainEntity: items.map((i) => ({ '@type': 'Question', name: i.q, acceptedAnswer: { '@type': 'Answer', text: i.a } })),
+};
+---
+
+<BaseLayout title={c.home.title} description={c.home.description} jsonLd={items.length ? [faqLd] : []}>
+  <section class="container hero">
+    <h1>{c.home.h1}</h1>
+    <p class="lead">{c.home.lead}</p>
+    <Cta lang={lang} />
+  </section>
+
+  {
+    c.home.sections.map((s) => (
+      <section class="container block">
+        <h2>{s.heading}</h2>
+        <p>{s.body}</p>
+      </section>
+    ))
+  }
+
+  {
+    items.length > 0 && (
+      <section class="container block" aria-labelledby="faq-h">
+        <h2 id="faq-h">{c.ui.faqHeading}</h2>
+        <Faq items={items.slice(0, 5)} />
+      </section>
+    )
+  }
+</BaseLayout>

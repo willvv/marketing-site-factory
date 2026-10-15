@@ -1,0 +1,31 @@
+---
+import { site, contact } from '../config';
+import { navKeys, pathFor, t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const copy = t(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <p class="footer-name">{site.name}</p>
+      <p>{site.tagline}</p>
+    </div>
+    <nav aria-label="Footer">
+      <ul>
+        {navKeys.map((k) => <li><a href={pathFor(k, lang)}>{copy.nav[k]}</a></li>)}
+      </ul>
+    </nav>
+    <address>
+      {contact.email && <p><a href={`mailto:${contact.email}`}>{contact.email}</a></p>}
+      {contact.phone && <p><a href={`tel:${contact.phone.replace(/[^+\d]/g, '')}`}>{contact.phone}</a></p>}
+      {contact.address && <p>{contact.address.street}, {contact.address.locality}, {contact.address.region}</p>}
+    </address>
+  </div>
+  <p class="container footer-legal">&copy; {year} {site.legalName}. {copy.ui.footerRights}</p>
+</footer>

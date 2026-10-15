@@ -1,0 +1,34 @@
+---
+/**
+ * Primary call to action. WhatsApp first when the business has a real number,
+ * with email as the honest fallback - never a fabricated number.
+ */
+import { contact, primaryCta, whatsappHref, mailtoHref } from '../config';
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  class?: string;
+}
+const { lang, class: className = '' } = Astro.props;
+const ui = t(lang).ui;
+
+const wa = whatsappHref(lang);
+const mail = mailtoHref(t(lang).home.title);
+const tel = contact.phone ? `tel:${contact.phone.replace(/[^+\d]/g, '')}` : null;
+
+const options = {
+  whatsapp: wa ? { href: wa, label: ui.ctaWhatsapp, external: true } : null,
+  email: mail ? { href: mail, label: ui.ctaEmail, external: false } : null,
+  phone: tel ? { href: tel, label: ui.ctaPhone, external: false } : null,
+};
+const chosen = options[primaryCta] ?? options.whatsapp ?? options.email ?? options.phone;
+---
+
+{
+  chosen && (
+    <a class={`cta ${className}`.trim()} href={chosen.href} {...(chosen.external ? { target: '_blank', rel: 'noopener' } : {})}>
+      {chosen.label}
+    </a>
+  )
+}

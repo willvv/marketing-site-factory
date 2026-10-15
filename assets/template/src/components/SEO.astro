@@ -1,0 +1,82 @@
+---
+/**
+ * Required on every page. No fallback for title/description: a missing value is a
+ * bug, not something to paper over.
+ *
+ * Emits: title, description, canonical, robots, Open Graph, Twitter Card,
+ * hreflang alternates (multilingual sites) and search-engine verification tags.
+ */
+import { site, verification } from '../config';
+import { locales, defaultLocale, langFromPath, alternatePath, t } from '../i18n';
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+}
+
+const DEFAULT_OG = '/og-default.png';
+const { title, description, ogImage = DEFAULT_OG, ogType = 'website', noindex = false } = Astro.props;
+
+const pathname = Astro.url.pathname;
+const canonical = new URL(pathname, Astro.site);
+const ogImageURL = new URL(ogImage, Astro.site);
+const fullTitle = title.includes(site.name) ? title : `${title} | ${site.name}`;
+
+const lang = langFromPath(pathname);
+const copy = t(lang);
+const alternates = locales.map((l) => ({
+  hreflang: t(l).htmlLang,
+  href: new URL(alternatePath(pathname, l), Astro.site).toString(),
+  og: t(l).ogLocale,
+  isSelf: l === lang,
+}));
+const xDefault = new URL(alternatePath(pathname, defaultLocale), Astro.site).toString();
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex,nofollow" />}
+
+{
+  locales.length > 1 && (
+    <>
+      {alternates.map((a) => (
+        <link rel="alternate" hreflang={a.hreflang} href={a.href} />
+      ))}
+      <link rel="alternate" hreflang="x-default" href={xDefault} />
+    </>
+  )
+}
+
+<meta property="og:site_name" content={site.name} />
+<meta property="og:locale" content={copy.ogLocale} />
+{alternates.filter((a) => !a.isSelf).map((a) => <meta property="og:locale:alternate" content={a.og} />)}
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:type" content={ogType} />
+<meta property="og:image" content={ogImageURL} />
+{
+  /* Dimensions are declared only for the default card, which scripts/fit-images.mjs
+     guarantees is 1200x630. A page passing its own image would need its own pair,
+     and a wrong pair is worse than none - some scrapers trust it over the file. */
+  ogImage === DEFAULT_OG && (
+    <>
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={`${site.name} - ${site.tagline}`} />
+    </>
+  )
+}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageURL} />
+
+{verification.google && <meta name="google-site-verification" content={verification.google} />}
+{verification.bing && <meta name="msvalidate.01" content={verification.bing} />}

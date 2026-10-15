@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { defaultLocale, pathFor, t } from '../i18n';
+
+const c = t(defaultLocale);
+---
+
+<BaseLayout title={c.ui.notFoundTitle} description={c.ui.notFoundBody} noindex>
+  <section class="container hero">
+    <h1>{c.ui.notFoundTitle}</h1>
+    <p class="lead">{c.ui.notFoundBody}</p>
+    <a class="cta" href={pathFor('home', defaultLocale)}>{c.ui.backHome}</a>
+  </section>
+</BaseLayout>

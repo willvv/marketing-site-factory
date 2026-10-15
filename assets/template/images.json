@@ -1,0 +1,25 @@
+{
+  "_comment": "Brand image manifest for gen-images.mjs. Replace every TODO with a prompt written from BRAND.md, then record the final prompts in BRAND.md. All images come from the image model - never composed in HTML/SVG/canvas. Put exact on-image words in quotes; pass the real logo via refs.",
+  "outDir": "src/assets/brand",
+  "style": "TODO shared style sentence, repeated in every prompt so the set matches: medium, palette (hex values), lighting, composition rules.",
+  "images": {
+    "icon-source": {
+      "prompt": "TODO: the brand mark as a square app-icon: simple, centred, flat background in the brand colour, no text.",
+      "size": "1024x1024"
+    },
+    "og-source": {
+      "prompt": "TODO: a 1200x630-friendly share card. Include the exact words \"TODO Business Name\" and the tagline \"TODO tagline\". Keep all text and the logo inside the central 80 percent of the frame so a crop to 1.91:1 loses nothing.",
+      "size": "1536x1024",
+      "refs": []
+    },
+    "hero": {
+      "prompt": "TODO: hero art that expresses the positioning. No text.",
+      "size": "1536x1024"
+    },
+    "icon-1": {
+      "prompt": "TODO: a single feature icon in the brand colour on a transparent background, same line weight and style as the others, no text.",
+      "size": "1024x1024",
+      "background": "transparent"
+    }
+  }
+}

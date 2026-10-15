@@ -1,0 +1,21 @@
+# {{name}}
+
+> TODO: two sentences. What the business is, where it is (town, province/state, country), who it serves.
+
+Site: {{url}}
+Contact: {{email}}
+Languages: {{languageNames}}
+
+## What we do
+- TODO: one line per real service or product. Real facts only.
+
+## Where and when
+- TODO: address, service area, opening hours - only what was supplied or verified.
+
+## How to reach us
+- Email: {{email}}
+- WhatsApp: TODO number, or remove this line while unpublished
+- Phone: TODO number, or remove this line while unpublished
+
+## Pages
+{{llmsPages}}
